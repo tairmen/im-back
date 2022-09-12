@@ -7,9 +7,9 @@ module.exports = function (app, models) {
 
         try {
 
-            const { email, password } = req.body;
+            const { email, password, code } = req.body;
 
-            if (!(email && password)) {
+            if (!(email && password) && !code) {
                 res.status(400).send({
                     success: false,
                     message: "All input is required"
@@ -17,28 +17,58 @@ module.exports = function (app, models) {
             }
 
             const user = await models.User.findOne({ where: { email } });
+            if (code) {
+                if (user && user.token == code) {
+                    const token = jwt.sign(
+                        { user_id: user._id, email: user.email },
+                        process.env.TOKEN_KEY,
+                        {
+                            expiresIn: "10d",
+                        }
+                    );
 
-            if (user && (await bcrypt.compare(password, user.password))) {
+                    let user = await models.User.update({ token: null }, {
+                        where: {
+                            email
+                        }
+                    });
 
-                const token = jwt.sign(
-                    { user_id: user._id, email },
-                    process.env.TOKEN_KEY,
-                    {
-                        expiresIn: "10d",
-                    }
-                );
-
-                res.status(200).json({
-                    success: true,
-                    data: user,
-                    token: token
-                });
-            } else {
-                res.status(400).send({
-                    success: false,
-                    message: "Invalid Credentials"
-                });
+                    res.status(200).json({
+                        success: true,
+                        data: user,
+                        token: token
+                    });
+                } else {
+                    res.status(400).send({
+                        success: false,
+                        message: "Invalid Credentials"
+                    });
+                }
             }
+            if (password) {
+                if (user && (await bcrypt.compare(password, user.password))) {
+
+                    const token = jwt.sign(
+                        { user_id: user._id, email },
+                        process.env.TOKEN_KEY,
+                        {
+                            expiresIn: "10d",
+                        }
+                    );
+
+                    res.status(200).json({
+                        success: true,
+                        data: user,
+                        token: token
+                    });
+                } else {
+                    res.status(400).send({
+                        success: false,
+                        message: "Invalid Credentials"
+                    });
+                }
+            }
+
         } catch (err) {
             console.log(err);
         }

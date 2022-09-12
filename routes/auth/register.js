@@ -1,5 +1,14 @@
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const make_code = require("../../plugins/make_code");
+let nodemailer = require('nodemailer');
+
+let mail = nodemailer.createTransport({
+    service: process.env.EMAIL_TYPE,
+    auth: {
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASS
+    }
+});
 
 module.exports = function (app, models) {
     // Register
@@ -25,26 +34,41 @@ module.exports = function (app, models) {
                 });
             }
 
+            let code = make_code(6);
+
+            await models.User.update({ token: code }, {
+                where: {
+                    email
+                }
+            });
+
+            let mailOptions = {
+                from: 'abduraimovtair@gmail.com',
+                to: email,
+                subject: 'Finish your registration',
+                text: `Code: ${code}`
+            };
+
+            mail.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
+
             encryptedPassword = await bcrypt.hash(password, 10);
 
             const user = await models.User.create({
                 phone,
                 email: email.toLowerCase(),
                 password: encryptedPassword,
+                token: code
             });
-
-            const token = jwt.sign(
-                { user_id: user._id, email },
-                process.env.TOKEN_KEY,
-                {
-                    expiresIn: "10d",
-                }
-            );
 
             res.status(201).json({
                 success: true,
-                data: user,
-                token: token
+                message: "Code sent to your email",
             });
         } catch (err) {
             console.log(err);
