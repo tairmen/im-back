@@ -17,9 +17,9 @@ app.post("/register", async (req, res) => {
 
     try {
 
-        const { name, email, password } = req.body;
+        const { phone, email, password } = req.body;
 
-        if (!(email && password && name)) {
+        if (!(email && password && phone)) {
             res.status(400).send({
                 success: false,
                 message: "All input is required"
@@ -38,7 +38,7 @@ app.post("/register", async (req, res) => {
         encryptedPassword = await bcrypt.hash(password, 10);
 
         const user = await models.User.create({
-            name,
+            phone,
             email: email.toLowerCase(),
             password: encryptedPassword,
         });

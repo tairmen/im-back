@@ -7,6 +7,8 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
     },
     email: { type: DataTypes.STRING, unique: true },
+    phone: { type: DataTypes.STRING },
+    balance:  { type: DataTypes.FLOAT },
     password: { type: DataTypes.STRING, allowNull: false },
     token: { type: DataTypes.STRING },
 });
