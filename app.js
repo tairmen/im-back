@@ -75,7 +75,7 @@ app.post("/login", async (req, res) => {
             });
         }
 
-        const user = await User.findOne({ where: { email } });
+        const user = await models.User.findOne({ where: { email } });
 
         if (user && (await bcrypt.compare(password, user.password))) {
 
@@ -92,11 +92,12 @@ app.post("/login", async (req, res) => {
                 data: user,
                 token: token
             });
+        } else {
+            res.status(400).send({
+                success: false,
+                message: "Invalid Credentials"
+            });
         }
-        res.status(400).send({
-            success: false,
-            message: "Invalid Credentials"
-        });
     } catch (err) {
         console.log(err);
     }
