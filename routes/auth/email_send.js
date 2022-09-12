@@ -1,6 +1,6 @@
 const make_code = require("../../plugins/make_code");
 let nodemailer = require('nodemailer');
-console.log(process.env.EMAIL, process.env.EMAIL_PASS)
+
 let mail = nodemailer.createTransport({
     service: process.env.EMAIL_TYPE,
     auth: {
