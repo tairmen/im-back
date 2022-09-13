@@ -18,7 +18,7 @@ module.exports = function (app, models) {
             const user = await models.User.findOne({ where: { token: code } });
             if (user && user.token == code) {
                 const token = jwt.sign(
-                    { user_id: user._id, email: user.email },
+                    { user_id: user.id, email: user.email },
                     process.env.TOKEN_KEY,
                     {
                         expiresIn: "10d",

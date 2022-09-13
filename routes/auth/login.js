@@ -16,11 +16,13 @@ module.exports = function (app, models) {
                 });
             }
 
-            const user = await models.User.findOne({ where: { email } });
             if (code) {
-                if (user && user.token == code) {
+
+                const user_c = await models.User.findOne({ where: { token: code } });
+
+                if (user_c && user_c.token == code) {
                     const token = jwt.sign(
-                        { user_id: user._id, email: user.email },
+                        { user_id: user_c._id, email: user_c.email },
                         process.env.TOKEN_KEY,
                         {
                             expiresIn: "10d",
@@ -29,7 +31,7 @@ module.exports = function (app, models) {
 
                     let user = await models.User.update({ token: null }, {
                         where: {
-                            email
+                            email: user_c.email
                         }
                     });
 
@@ -46,10 +48,13 @@ module.exports = function (app, models) {
                 }
             }
             if (password) {
+
+                const user = await models.User.findOne({ where: { email } });
+
                 if (user && (await bcrypt.compare(password, user.password))) {
 
                     const token = jwt.sign(
-                        { user_id: user._id, email },
+                        { user_id: user.id, email },
                         process.env.TOKEN_KEY,
                         {
                             expiresIn: "10d",
