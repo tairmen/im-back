@@ -1,6 +1,9 @@
 module.exports = function (app, models, auth) {
     app.post("/callback", async (req, res) => {
         const { order_id, status, type, customer_reference_id, blockchain_tx_id, order_amount, currency, cryptocurrency_amount, cryptocurrency } = req.body;
+        await models.Log.create({
+            data: JSON.stringify(req.body)
+        });
         let signature = req.headers['Signature'];
         if (status == 'COMPLETED') {
             let user_id = parseInt(customer_reference_id);

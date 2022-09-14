@@ -30,6 +30,12 @@ const Api = sequelize.define('Api', {
     front: { type: DataTypes.STRING }
 });
 
+const Log = sequelize.define('Log', {
+    data: {
+        type: DataTypes.TEXT,
+    },
+});
+
 const Order = sequelize.define('Order', {
     order_id: {
         type: DataTypes.STRING,
