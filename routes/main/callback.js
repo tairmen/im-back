@@ -17,12 +17,13 @@ module.exports = function (app, models, auth) {
                     order_id: order_id.toString(),
                     UserId: user_id
                 }
-            });
+            }).catch(e => console.log(e));
             let user = await models.User.findOne({
                 where: {
                     id: user_id
                 }
-            });
+            }).catch(e => console.log(e));
+            console.log(user)
             let balance = user.balance;
             balance += order_amount;
             await models.User.update({
@@ -61,5 +62,8 @@ module.exports = function (app, models, auth) {
                 }
             });
         }
+        res.status(200).send({
+            success: true
+        });
     });
 }

@@ -1,4 +1,5 @@
 let payment = require("./payment");
+let callback = require("./callback");
 
 module.exports = function (app, models, auth) {
     app.get("/current", auth, async (req, res) => {
@@ -11,4 +12,5 @@ module.exports = function (app, models, auth) {
         });
     });
     payment(app, models, auth);
+    callback(app, models, auth);
 }
