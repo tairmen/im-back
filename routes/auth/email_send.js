@@ -53,7 +53,7 @@ module.exports = function (app, models) {
                     message: "Code sent to your email",
                 });
             } else {
-                return res.status(409).send({
+                return res.status(200).send({
                     success: false,
                     message: "User not exist"
                 });

@@ -28,7 +28,7 @@ module.exports = function (app, models) {
             const oldUser = await models.User.findOne({ where: { email } });
 
             if (oldUser) {
-                return res.status(409).send({
+                return res.status(200).send({
                     success: false,
                     message: "User Already Exist. Please Login"
                 });

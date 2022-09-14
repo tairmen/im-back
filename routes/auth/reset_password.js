@@ -39,7 +39,7 @@ module.exports = function (app, models) {
                     token: token
                 });
             } else {
-                res.status(400).send({
+                res.status(200).send({
                     success: false,
                     message: "Invalid code"
                 });

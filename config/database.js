@@ -27,19 +27,25 @@ const Api = sequelize.define('Api', {
         type: DataTypes.STRING,
     },
     token: { type: DataTypes.TEXT },
-    front: { type: DataTypes.STRING },
+    front: { type: DataTypes.STRING }
 });
 
 const Order = sequelize.define('Order', {
     order_id: {
         type: DataTypes.STRING,
     },
+    usd_amount: { type: DataTypes.FLOAT },
+    crypto_amount: { type: DataTypes.FLOAT },
+    cryptocurrency: { type: DataTypes.STRING },
     payment_url: { type: DataTypes.STRING },
     status: { type: DataTypes.ENUM('success', 'processing', 'failed', 'refunded') }
 });
 Order.belongsTo(User);
+
 if (FORCE) {
     sequelize.sync({ force: true })
+} else {
+    sequelize.sync();
 }
 
 module.exports = sequelize;
